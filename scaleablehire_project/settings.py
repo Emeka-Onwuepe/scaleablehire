@@ -4,7 +4,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-scaleablehire-secret-key'
 DEBUG = True
-ALLOWED_HOSTS = ['app.lotzcrocoz.com','127.0.0.1']
+ALLOWED_HOSTS = ['app.lotzcrocoz.com','127.0.0.1','scaleablehire.vercel.app']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
