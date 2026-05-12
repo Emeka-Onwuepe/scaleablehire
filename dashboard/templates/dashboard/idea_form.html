@@ -1,11 +1,19 @@
 {% extends 'dashboard/base.html' %}
 {% block content %}
-<div class="card">
-    <h2>Submit New Idea</h2>
-    <form method="post">
+
+<div class=" bg-white p-4 shadow-soft sm:p-6">
+
+{% if not User.role and not User.team %}
+    <p>You are yet to be assigned a role and team</p>
+{% else %}
+    <h2 class="text-xl font-semibold text-slate-900 sm:text-2xl">Submit New Idea</h2>
+    <form method="post" class="mt-4 space-y-4 sm:mt-6 sm:space-y-5">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Submit</button>
+        <button type="submit" class="inline-flex rounded-2xl bg-sky-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">Submit</button>
     </form>
+{% endif %}
 </div>
+
+
 {% endblock %}

@@ -1,12 +1,12 @@
 {% extends 'dashboard/base.html' %}
 {% block content %}
-<div class="card">
-    <h2>Register</h2>
-    <form method="post">
+<div class=" bg-white p-4 shadow-soft sm:p-6">
+    <h2 class="text-xl font-semibold text-slate-900 sm:text-2xl">Register</h2>
+    <form method="post" class="mt-4 space-y-4 sm:mt-6 sm:space-y-5">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Register</button>
+        <button type="submit" class="inline-flex w-full justify-center rounded-2xl bg-sky-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 sm:w-auto">Register</button>
     </form>
-    <p>Already have an account? <a href="{% url 'login' %}">Login here</a>.</p>
+    <p class="mt-4 text-sm text-slate-600">Already have an account? <a class="font-semibold text-sky-600 hover:text-sky-700" href="{% url 'login' %}">Login here</a>.</p>
 </div>
 {% endblock %}
