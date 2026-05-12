@@ -1,0 +1,111 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+<div class="card">
+    <h2>Dashboard</h2>
+    <p>Welcome, {{ request.user.get_full_name|default:request.user.full_name }}.</p>
+</div>
+
+<div class="card">
+    {% if User.is_manager %}
+        <p>You are viewing all team ideas.</p>
+    {% elif User.is_team_lead %}
+        <p>You are viewing ideas from your team: {{ User.team }}</p>
+    {% else %}
+        <p>You are viewing your own ideas and any feedback from your team lead.</p>
+    {% endif %}
+    <hr />
+
+    {% comment %} <h3>Ideas</h3> {% endcomment %}
+    {% if idea_and_feedbacks %}
+        {% for item in idea_and_feedbacks %}
+            <div style="margin-bottom:1rem;">
+                <strong>{{ item.idea.title }}</strong> <span class="info"> 
+                    {% if User != item.idea.author %}
+                    by
+                    {{ item.idea.author.full_name  }} /
+                    {% endif %}        
+                    {% if item.idea.team %} {{ item.idea.team }}{% endif %}</span>
+                <p>{{ item.idea.content|linebreaksbr }}</p>
+                <small class="info">{{ item.idea.created_at }}</small>
+                    {% if User == item.idea.author and  User.is_manager or User.is_team_lead %}
+                        <p><a href="{% url 'delete_idea' item.idea.id %}"
+                            onclick="return confirm('Are you sure you want to delete this idea?');">Delete idea</a></p>
+                    {% endif %}
+
+                {% if item.teamlead_feedback %}
+                <p>Team Lead Feedback:</p>
+                {% for feedback in item.teamlead_feedback %}
+                <div style="margin-top:0.5rem; padding:0.5rem; border-left:3px solid #007bff;">
+                        <p>{{ feedback.content|linebreaksbr }}</p>
+                        <small class="info">
+                        {% if not feedback.author == User %}
+                        by {{ feedback.author.full_name }} |
+                        {% endif %}
+                        {{ feedback.created_at }}</small>
+                    
+                {% if feedback.author == User %}
+                    <p><a href="{% url 'add_feedback' item.idea.id feedback.id %}">Edit feedback</a></p>
+                    {% comment %} delete feedback {% endcomment %}
+                    <p><a href="{% url 'delete_feedback' feedback.id %}"
+                         onclick="return confirm('Are you sure you want to delete this feedback?');">Delete feedback</a></p>
+                {% endif %}
+                        
+                </div>    
+                {% endfor %}
+                {% endif %}
+
+
+                {% if item.manager_feedback %}
+                <p>Manager Feedback:</p>
+                {% for feedback in item.manager_feedback %}
+                <div style="margin-top:0.5rem; padding:0.5rem; border-left:3px solid #28a745;">
+                    <p>{{ feedback.content|linebreaksbr }}</p>
+                    <small class="info">
+                        {% if not feedback.author == User %}
+                        by {{ feedback.author.full_name }} |
+                        {% endif %}
+                        {{ feedback.created_at }}</small>
+                </div>
+                {% endfor %}    
+                {% endif %}
+                {% if User.is_manager or User.is_team_lead %}
+                {% if not item.idea.author == User %}
+                <p><a href="{% url 'add_feedback' item.idea.id 0 %}">Add feedback</a></p>
+                {% endif %} 
+                {% endif %}
+            </div>
+            <hr />
+        {% endfor %}
+    {% else %}
+        <p>No ideas found yet.</p>
+    {% endif %}
+</div>
+
+{% comment %} 
+{% if teamlead_feedbacks.exists %}
+<div class="card">
+    <h3>Team Lead Feedback</h3>
+    {% for feedback in teamlead_feedbacks %}
+        <div style="margin-bottom:0.8rem;">
+            <strong>{{ feedback.idea.title }}</strong>
+            <p>{{ feedback.content|linebreaksbr }}</p>
+            <small class="info">by {{ feedback.author.full_name }} on {{ feedback.created_at }}</small>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if manager_feedbacks.exists %}
+<div class="card">
+    <h3>Manager Feedback</h3>
+    {% for feedback in manager_feedbacks %}
+        <div style="margin-bottom:0.8rem;">
+            <strong>{{ feedback.idea.title }}</strong>
+            <p>{{ feedback.content|linebreaksbr }}</p>
+            <small class="info">by {{ feedback.author.full_name }} on {{ feedback.created_at }}</small>
+        </div>
+    {% endfor %}
+</div>
+{% endif %} {% endcomment %}
+
+{% endblock %}

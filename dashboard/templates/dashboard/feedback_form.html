@@ -1,0 +1,11 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+<div class="card">
+    <h2>Add Feedback for &ldquo;{{ idea_obj.title }}&rdquo;</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save Feedback</button>
+    </form>
+</div>
+{% endblock %}
