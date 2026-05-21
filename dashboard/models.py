@@ -12,11 +12,44 @@ class Team(models.Model):
 
     def __str__(self):
         return self.name
+    
+budget = (
+            ('No Cost','No Cost'),
+            ('Above 10K','Above 10k'),
+            ('Below 10k','Below 10k')
+                )
+priority = (
+            ('Must','Must'),
+            ('Could','Could'),
+            ('Should','Should')
+                )
+area = (
+            ('Application','Application'),
+            ('Onboarding','Onboarding'),
+            ('Management','Management'),
+            ('General','General'),
+                )
+
+dependency = (
+            ('Individual','Individual'),
+            ('Team','Team'),
+            ('Across','Across')
+                )
 
 
 class Idea(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     team = models.ForeignKey(Team, null=True, blank=True, on_delete=models.CASCADE)
+    budget = models.CharField(max_length=12,
+                                      choices = budget ,default='No Cost')
+    priority = models.CharField(max_length=12,
+                                      choices = priority ,default='Should')
+    area = models.CharField(max_length=12,
+                                      choices = area ,default='Application')
+    dependency = models.CharField(max_length=12,
+                                      choices = dependency ,default='Individual')
+    document = models.FileField("document",upload_to='documents/',blank=True,null=True)
+    
     title = models.CharField(max_length=200)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)

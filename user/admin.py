@@ -38,7 +38,7 @@ class UserChangeForm(forms.ModelForm):
     password = ReadOnlyPasswordHashField()
     class Meta:
         model = User
-        fields = ('phone_number','email','role','team',
+        fields = ('email','role','team',
                    'password', 'is_active', 'is_admin')
     def clean_password(self):
         # Regardless of what the user provides, return the initial value.
@@ -54,13 +54,13 @@ class UserAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('full_name','email','phone_number', 
+    list_display = ('full_name','email',
                     'role','team','is_admin')
     list_filter = ('is_admin',)
     # actions = [make_manager,]
     actions = []
     fieldsets = (
-    (None, {'fields': ('full_name','email','phone_number','role',
+    (None, {'fields': ('full_name','email','role',
                        'team','password', 'is_active')}),
     ('Permissions', {'fields': ('is_admin',"staff")}),
     )
@@ -69,8 +69,7 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
     (None, {
     'classes': ('wide',),
-    'fields': ('full_name','phone_number',
-               'role','team',
+    'fields': ('full_name', 'role','team',
                'email','password1', 'password2')}
     ),
     )

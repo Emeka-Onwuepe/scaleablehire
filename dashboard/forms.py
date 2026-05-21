@@ -7,14 +7,16 @@ class RegistrationForm(UserCreationForm):
     
     class Meta:
         model = User
-        fields = [ 'full_name', 'email', 'phone_number',
+        fields = [ 'full_name', 'email',
                   'password1', 'password2']
 
 
 class IdeaForm(forms.ModelForm):
     class Meta:
         model = Idea
-        fields = ['title', 'content']
+        fields = ['title', 'content','budget', 'priority',
+                    'area', 'dependency','document'
+]
         widgets = {
             'content': forms.Textarea(attrs={'rows': 4}),
         }

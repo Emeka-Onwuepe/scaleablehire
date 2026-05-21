@@ -3,7 +3,7 @@
 
 <div class=" bg-white p-4 shadow-soft sm:p-6">
 
-{% if not User.role and not User.team %}
+{% if not request.user.role and not request.user.team %}
     <p>You are yet to be assigned a role and team</p>
 {% else %}
     <h2 class="text-xl font-semibold text-slate-900 sm:text-2xl">Submit New Idea</h2>

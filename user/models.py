@@ -8,7 +8,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 
 class UserManager(BaseUserManager):
     def create_user(self, email,full_name,role='staff',team=None,
-                    phone_number = '080',password=None, **extra_fields):
+                    password=None, **extra_fields):
         if not email:
             raise ValueError('The Email must be set')
         email = self.normalize_email(email)
@@ -38,7 +38,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
     team = models.ForeignKey('dashboard.Team', null=True, blank=True, on_delete=models.SET_NULL)
     email = models.EmailField(unique=True)
-    phone_number = models.CharField(max_length=15,default='',blank=True,null=True)
     is_active = models.BooleanField(default=True)
     staff = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
