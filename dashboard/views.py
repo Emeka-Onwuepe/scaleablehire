@@ -3,6 +3,12 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden
 from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.conf import settings
+from django.contrib import messages
 from .forms import RegistrationForm, IdeaForm, FeedbackForm
 from .models import Idea, Feedback, User
 
@@ -18,12 +24,88 @@ def register_view(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('dashboard')
+            user = form.save(commit=False)
+            user.is_active = False  # Deactivate until email is verified
+            user.save()
+            
+            # Send verification email
+            send_verification_email(request, user)
+            messages.success(request, 'Registration successful! Please check your email to verify your account.')
+            return redirect('email_verification_sent')
     else:
         form = RegistrationForm()
     return render(request, 'dashboard/register.html', {'form': form})
+
+
+def send_verification_email(request, user):
+    """Send email verification link to user"""
+    token = default_token_generator.make_token(user)
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    
+    verification_url = request.build_absolute_uri(
+        f'/verify-email/{uid}/{token}/'
+    )
+    
+    subject = 'Verify your email address'
+    message = f"""
+    Hello {user.first_name},
+    
+    Please click the link below to verify your email address:
+    
+    {verification_url}
+    
+    This link will expire in 24 hours.
+    
+    Best regards,
+    ScaleableHire Team
+    """
+    
+    send_mail(
+        subject,
+        message,
+        settings.DEFAULT_FROM_EMAIL,
+        [user.email],
+        fail_silently=False,
+    )
+
+
+def email_verification_sent(request):
+    """Display message after verification email is sent"""
+    return render(request, 'dashboard/email_verification_sent.html')
+
+
+def verify_email(request, uidb64, token):
+    """Verify user email from token link"""
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        messages.success(request, 'Email verified successfully! You can now log in.')
+        return redirect('login')
+    else:
+        messages.error(request, 'Email verification failed. The link may have expired.')
+        return redirect('register')
+
+
+def resend_verification_email(request):
+    """Resend verification email to user"""
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        try:
+            user = User.objects.get(email=email, is_active=False)
+            send_verification_email(request, user)
+            messages.success(request, 'Verification email has been resent. Please check your email.')
+            return redirect('email_verification_sent')
+        except User.DoesNotExist:
+            messages.error(request, 'No unverified account found with this email address.')
+    
+    return render(request, 'dashboard/resend_verification.html')
+
 
 @login_required(login_url='/login')
 def dashboard_view(request):
