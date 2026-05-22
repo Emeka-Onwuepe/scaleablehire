@@ -48,7 +48,7 @@ def send_verification_email(request, user):
     
     subject = 'Verify your email address'
     message = f"""
-    Hello {user.first_name},
+    Hello {user.full_name},
     
     Please click the link below to verify your email address:
     
