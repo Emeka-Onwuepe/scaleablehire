@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h2 class="card-title mb-4">Verify Your Email</h2>
+                    
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <p class="card-text">
+                        A verification link has been sent to your email address. 
+                        Please click the link in your email to verify your account.
+                    </p>
+                    
+                    <p class="card-text text-muted">
+                        Didn't receive the email?
+                    </p>
+                    
+                    <a href="{% url 'resend_verification' %}" class="btn btn-primary">
+                        Resend Verification Email
+                    </a>
+                    
+                    <hr>
+                    
+                    <p class="card-text small">
+                        Already verified? <a href="{% url 'login' %}">Go to login</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
