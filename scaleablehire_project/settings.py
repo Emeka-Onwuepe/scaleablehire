@@ -103,7 +103,7 @@ EMAIL_HOST = os.environ.get('EMAIL_HOST', 'lotzcrocoz.com')
 EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 465))
 EMAIL_USE_SSL = True
 EMAIL_HOST_USER = os.environ.get('EMAIL_USER', 'app@lotzcrocoz.com')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS',"admin@2026")
 DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_USER', 'app@lotzcrocoz.com')
 
 # Token expiration (in seconds) - default is 24 hours (86400 seconds)
