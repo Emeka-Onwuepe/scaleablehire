@@ -172,7 +172,7 @@ def dashboard_view(request):
 @login_required(login_url='/login')
 def submit_idea(request):
     if request.method == 'POST':
-        form = IdeaForm(request.POST)
+        form = IdeaForm(request.POST, request.FILES)
         if form.is_valid():
             idea_obj = form.save(commit=False)
             idea_obj.author = request.user
